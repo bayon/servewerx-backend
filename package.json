@@ -1,0 +1,22 @@
+{
+  "name": "servewerx-backend",
+  "version": "1.0.0",
+  "description": "api for servewerx",
+  "main": "index.js",
+  "scripts": {
+    "test": "test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/bayon/servewerx-backend.git"
+  },
+  "author": "Frederick Bayon Forte",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/bayon/servewerx-backend/issues"
+  },
+  "homepage": "https://github.com/bayon/servewerx-backend#readme",
+  "dependencies": {
+    "express": "^4.17.1"
+  }
+}

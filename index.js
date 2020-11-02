@@ -2,18 +2,20 @@ var express = require("express");
 //npm install cors
 var cors = require('cors');
 var app = express();
+var mysql = require('mysql')
+
 app.use(cors());
 app.listen(3000, () => {
  console.log("Server running on port 3000");
 });
 
 app.get("/url", (req, res, next) => {
-
-    var mysql = require('mysql')
+    /*
+    //var mysql = require('mysql')
     var connection = mysql.createConnection({
     host: 'localhost',
     user: 'root',
-    password: 'serverwerxAdm1n@##',
+    password: 'root',
     database: 'serverwerx'
     })
 
@@ -23,13 +25,14 @@ app.get("/url", (req, res, next) => {
     if (err) throw err
 
     console.log('The solution is: ', rows[0].solution)
+    var data = row[0].solution;
     })
-
+*/
    
 
-    res.json(["Tony","Lisa","Michael","Ginger","Food",rows[0].solution]);
-    
-    connection.end()
+    res.json(["Tony","Lisa","Michael","Ginger","Food"]);
+
+   //connection.end()
 
    });
 

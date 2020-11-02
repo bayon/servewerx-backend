@@ -8,16 +8,22 @@ app.use(cors());
 app.listen(3000, () => {
  console.log("Server running on port 3000");
 });
-
+var IN_DEV = true;
+var MYSQL_PORT = 3306
+var MYSQL_PASSWORD = "servewerxAdm1n@@#"
+if(IN_DEV){
+    MYSQL_PORT = 8889
+    MYSQL_PASSWORD = 'root'
+}
 app.get("/url", (req, res, next) => {
     
     //var mysql = require('mysql')
     var connection = mysql.createConnection({
     host: 'localhost',
     user: 'root',
-    password: 'root',
+    password: MYSQL_PASSWORD,
     database: 'serverwerx',
-    port:'8889'
+    port:MYSQL_PORT
     })
     var data 
     connection.connect()

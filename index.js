@@ -8,11 +8,9 @@ app.listen(3000, () => {
  console.log("Server running on port 3000");
 });
 
-
 app.get("/",(req,res, next) => {
     res.json(["testing","blank"])
 });
-
 
 app.get("/url",(req, res, next) => {
 //NOTE: Could NOT access mysql with user 'api', had to use 'root'. Spent several hours trouble shooting.
@@ -41,5 +39,4 @@ connection.query('SELECT * FROM servewerx.junk', function (err, rows, fields) {
 
 connection.end()
 
-//res.json(["this","mysql","is","crapola"]);
 })

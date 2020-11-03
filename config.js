@@ -9,7 +9,7 @@
     process.env.DB_PORT = 8889
     process.env.DB_PWD = "root"
   */
- 
+
   module.exports = {
     NODE_ENV: process.env.NODE_ENV || 'production',
     HOST: process.env.HOST || 'localhost',

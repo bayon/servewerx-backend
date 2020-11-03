@@ -1,13 +1,20 @@
+const config = require('./config.js');
+console.log(`NODE_ENV=${config.NODE_ENV}`);
+//==========================================
 var express = require("express");
 var cors = require('cors');
 var app = express();
 var mysql = require('mysql')
 
 app.use(cors());
+/*
 app.listen(3000, () => {
  console.log("Server running on port 3000");
 });
-
+*/
+app.listen(config.PORT, config.HOST, function () {
+  console.log(`App listening on http://${config.HOST}:${config.PORT}`);
+});
 
 app.get("/",(req,res, next) => {
     res.json(["testing","blank"])

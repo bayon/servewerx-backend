@@ -1,10 +1,25 @@
 //=====
 const config = require('./config.js');
+
 //====
 var express = require("express");
 var cors = require('cors');
 var app = express();
 var mysql = require('mysql')
+const bodyParser = require("body-parser")
+const path = require("path")
+
+
+//globals
+global.server = {}
+global.server.port = process.env.PORT
+global.server.env = process.env.NODE_ENV
+global.server.appRoot = path.resolve(__dirname)
+//logging 
+//configure request logs
+const morgan = require("morgan")
+const winston = require("./log_config/winston.js")
+app.use(morgan("combined", { stream: winston.stream }))
 
 app.use(cors());
 /*
@@ -56,3 +71,22 @@ connection.query('SELECT * FROM servewerx.junk', function (err, rows, fields) {
 connection.end()
 
 })
+
+// error handler
+// called as the last middleware. Expects an error object as the first argument, which we pass in manually as part of the next() function
+//from within the other routes. This allows us to catch and handle errors in routes.
+app.use(function (err, req, res, next) {
+  var errorResponse = {};
+  errorResponse.status = err.status;
+  errorResponse.message = err.message;
+
+  // logging
+  res.locals.message = err.message;
+  res.locals.error = req.app.get("env") === "development" ? err : {};
+
+  // add this line to include winston logging
+  winston.error(`${err.status || 500} - ${err.message} - ${req.originalUrl} - ${req.method} - ${req.ip}`);
+
+  //retrun 500
+  return res.status(err.status || 500).json(errorResponse);
+});

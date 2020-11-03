@@ -7,25 +7,35 @@ var app = express();
 var mysql = require('mysql')
 
 app.use(cors());
+/*
 app.listen(3000, () => {
  console.log("Server running on port 3000");
+});
+*/
+console.log("NODE_ENV:",process.env.NODE_ENV  )
+console.log("HOST:",process.env.HOST)
+console.log("PORT:",process.env.PORT)
+console.log("DB_PORT:",process.env.DB_PORT)
+console.log("DB_PWD:",process.env.DB_PWD)
+console.log("jack",process.env.jack)
+//console.log("process.env:",process.env)
+
+app.listen(config.PORT, config.HOST, function () {
+  console.log(`App listening on http://${config.HOST}:${config.PORT}`);
 });
 
 app.get("/",(req,res, next) => {
     res.json(["testing","blank"])
 });
 
-console.log("process.env:",process.env)
-
-
 app.get("/url",(req, res, next) => {
 //NOTE: Could NOT access mysql with user 'api', had to use 'root'. Spent several hours trouble shooting.
 var connection = mysql.createConnection({
-  host: 'localhost',
-  user: 'root',
-  password: 'password123',
-  database: 'servewerx',
-  port: '3306'
+  host: 'localhost',        // same
+  user: 'root',             // same
+  password: config.DB_PWD,  // production: password123   // development: root
+  database: 'servewerx',    // same
+  port: config.DB_PORT      // production: 3306          // development: 8889
 })
 
 connection.connect()

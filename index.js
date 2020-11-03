@@ -12,6 +12,9 @@ app.get("/",(req,res, next) => {
     res.json(["testing","blank"])
 });
 
+console.log("process.env:",process.env)
+
+
 app.get("/url",(req, res, next) => {
 //NOTE: Could NOT access mysql with user 'api', had to use 'root'. Spent several hours trouble shooting.
 var connection = mysql.createConnection({

@@ -23,6 +23,19 @@ app.use(morgan("combined", { stream: winston.stream }))
 
 app.use(cors());
 app.use(express.json()); //may not need body-parser
+//middleware 
+const middlewareB = require("./middleware/middlewareX")
+
+const middleware = () => {
+  return (req,res,next) => {
+    if(1 === 2){
+      res.status(400).send('Server fail at middleware...')
+    }else {
+      next()
+    }
+  }
+}
+ 
 
 /*
 app.listen(3000, () => {
@@ -45,7 +58,7 @@ app.get("/",(req,res, next) => {
     res.json(["testing","blank"])
 });
 
-app.get("/api/v1/junk",(req, res, next) => {
+app.get("/api/v1/junk",middlewareB(),(req, res, next) => {
 //NOTE: Could NOT access mysql with user 'api', had to use 'root'. Spent several hours trouble shooting.
 var connection = mysql.createConnection({
   host: 'localhost',        // same
@@ -75,6 +88,7 @@ connection.end()
 })
 //================================
 // EXAMPLE ROUTES:  https://www.digitalocean.com/community/tutorials/nodejs-express-routing
+//=========================================
 let accounts = [
   {
     "id": 1,

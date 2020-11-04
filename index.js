@@ -22,6 +22,8 @@ const winston = require("./log_config/winston.js")
 app.use(morgan("combined", { stream: winston.stream }))
 
 app.use(cors());
+app.use(express.json()); //may not need body-parser
+
 /*
 app.listen(3000, () => {
  console.log("Server running on port 3000");
@@ -43,7 +45,7 @@ app.get("/",(req,res, next) => {
     res.json(["testing","blank"])
 });
 
-app.get("/url",(req, res, next) => {
+app.get("/api/v1/junk",(req, res, next) => {
 //NOTE: Could NOT access mysql with user 'api', had to use 'root'. Spent several hours trouble shooting.
 var connection = mysql.createConnection({
   host: 'localhost',        // same
@@ -71,22 +73,75 @@ connection.query('SELECT * FROM servewerx.junk', function (err, rows, fields) {
 connection.end()
 
 })
+//================================
+// EXAMPLE ROUTES:  https://www.digitalocean.com/community/tutorials/nodejs-express-routing
+let accounts = [
+  {
+    "id": 1,
+    "username": "paulhal",
+    "role": "admin"
+  },
+  {
+    "id": 2,
+    "username": "johndoe",
+    "role": "guest"
+  },
+  {
+    "id": 3,
+    "username": "sarahjane",
+    "role": "guest"
+  }
+];
 
-// error handler
-// called as the last middleware. Expects an error object as the first argument, which we pass in manually as part of the next() function
-//from within the other routes. This allows us to catch and handle errors in routes.
-app.use(function (err, req, res, next) {
-  var errorResponse = {};
-  errorResponse.status = err.status;
-  errorResponse.message = err.message;
-
-  // logging
-  res.locals.message = err.message;
-  res.locals.error = req.app.get("env") === "development" ? err : {};
-
-  // add this line to include winston logging
-  winston.error(`${err.status || 500} - ${err.message} - ${req.originalUrl} - ${req.method} - ${req.ip}`);
-
-  //retrun 500
-  return res.status(err.status || 500).json(errorResponse);
+app.get('/api/v1/accounts', (request, response) => {
+  response.json(accounts);
 });
+
+app.get('/api/v1/accounts/:id', (request, response) => {
+  const accountId = Number(request.params.id);
+  const getAccount = accounts.find((account) => account.id === accountId);
+
+  if (!getAccount) {
+    response.status(500).send('Account not found.')
+  } else {
+    response.json(getAccount);
+  }
+});
+
+app.post('/api/v1/accounts', (request, response) => {
+  const incomingAccount = request.body;
+
+  accounts.push(incomingAccount);
+
+  response.json(accounts);
+})
+
+app.put('/api/v1/accounts/:id', (request, response) => {
+  const accountId = Number(request.params.id);
+  const body = request.body;
+  const account = accounts.find((account) => account.id === accountId);
+  const index = accounts.indexOf(account);
+
+  if (!account) {
+    response.status(500).send('Account not found.');
+  } else {
+    const updatedAccount = { ...account, ...body };
+
+    accounts[index] = updatedAccount;
+
+    response.send(updatedAccount);
+  }
+});
+
+app.delete('/api/v1/accounts/:id', (request, response) => {
+  const accountId = Number(request.params.id);
+  const newAccounts = accounts.filter((account) => account.id != accountId);
+
+  if (!newAccounts) {
+    response.status(500).send('Account not found.');
+  } else {
+    accounts = newAccounts;
+    response.send(accounts);
+  }
+});
+ 

@@ -16,52 +16,23 @@ const middlewareX = require("../middleware/middlewareX")
  
 //==============
  
-
 apivTest.get("/junk",middlewareX(),(req, res, next) => {
+
     if(!db_conn()){
         res.status(500).send('NO ENCAPSULATED DB CONNECTION.')
     }
-    //var pee = db_conn()
-    //console.log(pee);
-
-
     var conn = db_conn()
-   // var conn = getConnection()
-
-
-    //var conn = db_conn;
-    if(!conn){
-        res.status(500).send('NO DB CONNECTION')
-    }
-    //NOTE: Could NOT access mysql with user 'api', had to use 'root'. Spent several hours trouble shooting.
-   /* 
-   var connection = mysql.createConnection({
-      host: 'localhost',        // same
-      user: 'root',             // same
-      password: config.DB_PWD,  // production: password123   // development: root
-      database: 'servewerx',    // same
-      port: config.DB_PORT      // production: 3306          // development: 8889
-    })
-    */
-  
-   
-    var global = "";
     conn.query('SELECT * FROM servewerx.junk', function (err, rows, fields) {
       if (err) throw err
-  
-        var data_array = [];
-        var name = rows[0].name
-        var data = rows
-        var obj = {}
-        obj.name = rows[0].name;
-        obj.age = rows[0].age
-        var data = JSON.stringify(obj);
+        var data = [];
+        rows.map( row => {
+            data.push(row)
+        });
         res.json(data)
     })
-  
     conn.end()
   
-  })
+})
   //================================
   // EXAMPLE ROUTES:  https://www.digitalocean.com/community/tutorials/nodejs-express-routing
   //=========================================

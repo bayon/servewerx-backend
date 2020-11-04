@@ -53,34 +53,37 @@ apivTest.get("/junk/:id",middlewareX(),(req, res, next) => {
 })
 
 apivTest.post('/junk', (req, res) => {
+
     const _junk = req.body;
     if(!db_conn()){
         res.status(500).send('NO ENCAPSULATED DB CONNECTION.')
     }
     var conn = db_conn()
- 
     conn.query(`INSERT INTO servewerx.junk (name,age) VALUES ('${_junk.name}','${_junk.age}')`, function (err, rows, fields) {
       if (err) throw err
-        var data = [];
-        rows.map( row => {
-            data.push(row)
-        });
-        res.json(data)
+        res.status(200).send(`insert id:${rows.insertId}`)  
     })
     conn.end()
 
-    //accounts.push(incomingAccount);
-    res.status(200).send('INSERTED SUCCESSFULLY')  
 })
 
 apivTest.put('/junk/:id', (req, res) => {
+
     const id = Number(req.params.id);
     const _junk = req.body;
-    console.log("id:",id)
-    console.log("_junk:",_junk)
-    //accounts.push(incomingAccount);
-    res.status(200).send('UPDATED SUCCESSFULLY')  
+    if(!db_conn()){
+        res.status(500).send('NO ENCAPSULATED DB CONNECTION.')
+    }
+    var conn = db_conn()
+    conn.query(`UPDATE servewerx.junk SET name = '${_junk.name}', age = '${_junk.age}' WHERE id = ${id}`, function (err, rows, fields) {
+      if (err) throw err
+        res.status(200).send(`Update Success msg:${rows.message}`)  
+    })
+    conn.end()
+
 })
+
+
   //================================
   // EXAMPLE ROUTES:  https://www.digitalocean.com/community/tutorials/nodejs-express-routing
   //=========================================

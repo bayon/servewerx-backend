@@ -15,20 +15,40 @@ apivTest.get('/users', function(req, res) {
 const middlewareX = require("../middleware/middlewareX")
  
 //==============
-
-apivTest.get("/junk",middlewareX(),(req, res, next) => {
+function getConnection(){
     //NOTE: Could NOT access mysql with user 'api', had to use 'root'. Spent several hours trouble shooting.
     var connection = mysql.createConnection({
+        host: 'localhost',        // same
+        user: 'root',             // same
+        password: config.DB_PWD,  // production: password123   // development: root
+        database: 'servewerx',    // same
+        port: config.DB_PORT      // production: 3306          // development: 8889
+      })
+    if(connection){
+        return connection
+    } else {
+        return false
+    }
+    
+}
+
+apivTest.get("/junk",middlewareX(),(req, res, next) => {
+    var conn = getConnection()
+    if(!conn){
+        res.status(500).send('NO DB CONNECTION')
+    }
+    //NOTE: Could NOT access mysql with user 'api', had to use 'root'. Spent several hours trouble shooting.
+   /* var connection = mysql.createConnection({
       host: 'localhost',        // same
       user: 'root',             // same
       password: config.DB_PWD,  // production: password123   // development: root
       database: 'servewerx',    // same
       port: config.DB_PORT      // production: 3306          // development: 8889
-    })
+    })*/
   
-    connection.connect()
+    conn.connect()
     var global = "";
-    connection.query('SELECT * FROM servewerx.junk', function (err, rows, fields) {
+    conn.query('SELECT * FROM servewerx.junk', function (err, rows, fields) {
       if (err) throw err
   
         var data_array = [];
@@ -41,7 +61,7 @@ apivTest.get("/junk",middlewareX(),(req, res, next) => {
         res.json(data)
     })
   
-    connection.end()
+    conn.end()
   
   })
   //================================

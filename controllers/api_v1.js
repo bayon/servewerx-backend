@@ -18,6 +18,7 @@ const middlewareX = require("../middleware/middlewareX")
 
 apiv1.get("/junk",middlewareX(),(req, res, next) => {
     //NOTE: Could NOT access mysql with user 'api', had to use 'root'. Spent several hours trouble shooting.
+   
     var connection = mysql.createConnection({
       host: 'localhost',        // same
       user: 'root',             // same

@@ -3,7 +3,7 @@ const config = require('../config.js');
 var mysql = require('mysql')
 var express = require("express");
 var apivTest = express.Router();
-
+var db_conn = require('../db/connection')
 apivTest.get('/', function(req, res) {
   res.send('Hello from apivTest root route.');
 });
@@ -15,38 +15,36 @@ apivTest.get('/users', function(req, res) {
 const middlewareX = require("../middleware/middlewareX")
  
 //==============
-function getConnection(){
-    //NOTE: Could NOT access mysql with user 'api', had to use 'root'. Spent several hours trouble shooting.
-    var connection = mysql.createConnection({
-        host: 'localhost',        // same
-        user: 'root',             // same
-        password: config.DB_PWD,  // production: password123   // development: root
-        database: 'servewerx',    // same
-        port: config.DB_PORT      // production: 3306          // development: 8889
-      })
-    if(connection){
-        return connection
-    } else {
-        return false
-    }
-    
-}
+ 
 
 apivTest.get("/junk",middlewareX(),(req, res, next) => {
-    var conn = getConnection()
+    if(!db_conn()){
+        res.status(500).send('NO ENCAPSULATED DB CONNECTION.')
+    }
+    //var pee = db_conn()
+    //console.log(pee);
+
+
+    var conn = db_conn()
+   // var conn = getConnection()
+
+
+    //var conn = db_conn;
     if(!conn){
         res.status(500).send('NO DB CONNECTION')
     }
     //NOTE: Could NOT access mysql with user 'api', had to use 'root'. Spent several hours trouble shooting.
-   /* var connection = mysql.createConnection({
+   /* 
+   var connection = mysql.createConnection({
       host: 'localhost',        // same
       user: 'root',             // same
       password: config.DB_PWD,  // production: password123   // development: root
       database: 'servewerx',    // same
       port: config.DB_PORT      // production: 3306          // development: 8889
-    })*/
+    })
+    */
   
-    conn.connect()
+   
     var global = "";
     conn.query('SELECT * FROM servewerx.junk', function (err, rows, fields) {
       if (err) throw err

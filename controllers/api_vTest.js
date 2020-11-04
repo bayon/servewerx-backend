@@ -33,6 +33,54 @@ apivTest.get("/junk",middlewareX(),(req, res, next) => {
     conn.end()
   
 })
+
+apivTest.get("/junk/:id",middlewareX(),(req, res, next) => {
+    const id = Number(req.params.id);
+    if(!db_conn()){
+        res.status(500).send('NO ENCAPSULATED DB CONNECTION.')
+    }
+    var conn = db_conn()
+    conn.query(`SELECT * FROM servewerx.junk WHERE id = ${id}`, function (err, rows, fields) {
+      if (err) throw err
+        var data = [];
+        rows.map( row => {
+            data.push(row)
+        });
+        res.json(data)
+    })
+    conn.end()
+  
+})
+
+apivTest.post('/junk', (req, res) => {
+    const _junk = req.body;
+    if(!db_conn()){
+        res.status(500).send('NO ENCAPSULATED DB CONNECTION.')
+    }
+    var conn = db_conn()
+ 
+    conn.query(`INSERT INTO servewerx.junk (name,age) VALUES ('${_junk.name}','${_junk.age}')`, function (err, rows, fields) {
+      if (err) throw err
+        var data = [];
+        rows.map( row => {
+            data.push(row)
+        });
+        res.json(data)
+    })
+    conn.end()
+
+    //accounts.push(incomingAccount);
+    res.status(200).send('INSERTED SUCCESSFULLY')  
+})
+
+apivTest.put('/junk/:id', (req, res) => {
+    const id = Number(req.params.id);
+    const _junk = req.body;
+    console.log("id:",id)
+    console.log("_junk:",_junk)
+    //accounts.push(incomingAccount);
+    res.status(200).send('UPDATED SUCCESSFULLY')  
+})
   //================================
   // EXAMPLE ROUTES:  https://www.digitalocean.com/community/tutorials/nodejs-express-routing
   //=========================================

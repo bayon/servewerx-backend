@@ -82,11 +82,28 @@ apivTest.put('/junk/:id', (req, res) => {
     conn.end()
 
 })
+apivTest.delete('/junk/:id', (req,res) => {
 
+    const id = Number(req.params.id);
+    if(!db_conn()){
+        res.status(500).send('NO ENCAPSULATED DB CONNECTION.')
+    }
+    var conn = db_conn()
+    conn.query(`DELETE FROM servewerx.junk WHERE id = ${id}`, function (err, rows, fields) {
+      if (err) throw err
+      console.log("rows:",rows)
+        res.status(200).send(`DELETE Success affected rows:${rows.affectedRows}`)  
+    })
+    conn.end()
+  });
+   
 
   //================================
   // EXAMPLE ROUTES:  https://www.digitalocean.com/community/tutorials/nodejs-express-routing
+  //  specifically interesting in terms of how it massages the json data.
   //=========================================
+  
+  /*
   let accounts = [
     {
       "id": 1,
@@ -155,13 +172,7 @@ apivTest.put('/junk/:id', (req, res) => {
     }
   });
    
-  
-
-
-
-
-
-
+*/
 
 //=====================
 module.exports = apivTest;

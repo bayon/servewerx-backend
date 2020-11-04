@@ -3,6 +3,7 @@ const config = require('../config.js');
 var mysql = require('mysql')
 var express = require("express");
 var apivTest = express.Router();
+var bodyParser = require('body-parser')
 var db_conn = require('../db/connection')
 apivTest.get('/', function(req, res) {
   res.send('Hello from apivTest root route.');
@@ -96,7 +97,61 @@ apivTest.delete('/junk/:id', (req,res) => {
     })
     conn.end()
   });
-   
+
+
+
+  apivTest.post('/auth/signup', (req, res) => {
+
+    const body = req.body;
+    console.log("req.body:",body)
+    console.log("req.params:",req.params)
+    //console.log("req:",req)
+    if(!db_conn()){
+        res.status(500).send('NO ENCAPSULATED DB CONNECTION.')
+    }
+    var conn = db_conn()
+   /* 
+   conn.query(`INSERT INTO servewerx.user (userName,password) VALUES ('${body.userName}','${body.password}')`, function (err, rows, fields) {
+      if (err) throw err
+        res.status(200).send(`insert id:${rows.insertId}`)  
+    })
+    */
+    var get_token_from_somewhere = 'token-need-to-get'
+
+   res.status(200).send(`${get_token_from_somewhere}`)
+    conn.end()
+
+})
+
+
+apivTest.post('/auth/login', (req, res) => {
+
+  const body = req.body;
+  console.log("req.body:",body)
+  console.log("req.params:",req.params)
+  //console.log("req:",req)
+  if(!db_conn()){
+      res.status(500).send('NO ENCAPSULATED DB CONNECTION.')
+  }
+  var conn = db_conn()
+ /* 
+ conn.query(`INSERT INTO servewerx.user (userName,password) VALUES ('${body.userName}','${body.password}')`, function (err, rows, fields) {
+    if (err) throw err
+      res.status(200).send(`insert id:${rows.insertId}`)  
+  })
+  */
+ 
+ res.status(200).send(`successful login by existing member user.`)
+  conn.end()
+
+})
+
+
+  //=====================
+module.exports = apivTest;
+
+
+
 
   //================================
   // EXAMPLE ROUTES:  https://www.digitalocean.com/community/tutorials/nodejs-express-routing
@@ -174,5 +229,4 @@ apivTest.delete('/junk/:id', (req,res) => {
    
 */
 
-//=====================
-module.exports = apivTest;
+

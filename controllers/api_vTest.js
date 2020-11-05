@@ -4,6 +4,10 @@ var mysql = require('mysql')
 var express = require("express");
 var apivTest = express.Router();
 var bodyParser = require('body-parser')
+const bcrypt = require('bcrypt');
+
+
+
 var db_conn = require('../db/connection')
 apivTest.get('/', function(req, res) {
   res.send('Hello from apivTest root route.');
@@ -14,7 +18,7 @@ apivTest.get('/users', function(req, res) {
 });
 //middleware 
 const middlewareX = require("../middleware/middlewareX")
- 
+const auth = require("../middleware/auth")
 //==============
  
 apivTest.get("/junk",middlewareX(),(req, res, next) => {
@@ -100,25 +104,30 @@ apivTest.delete('/junk/:id', (req,res) => {
 
 
 
-  apivTest.post('/auth/signup', (req, res) => {
+  apivTest.post('/auth/signup',auth(), (req, res, next) => {
 
+    //res.locals.AAA = "monkey"
+    //console.log("hashed password?:",password)
     const body = req.body;
     console.log("req.body:",body)
     console.log("req.params:",req.params)
+    console.log("res.locals:",res.locals)
+     
     //console.log("req:",req)
     if(!db_conn()){
+      console.log("CONNECTION? ? ")
         res.status(500).send('NO ENCAPSULATED DB CONNECTION.')
     }
     var conn = db_conn()
-   /* 
-   conn.query(`INSERT INTO servewerx.user (userName,password) VALUES ('${body.userName}','${body.password}')`, function (err, rows, fields) {
+   var hashed_password = res.locals.hashed_password
+   conn.query(`INSERT INTO servewerx.user (userName,password) VALUES ('${body.userName}','${hashed_password}')`, function (err, rows, fields) {
       if (err) throw err
-        res.status(200).send(`insert id:${rows.insertId}`)  
+        console.log("ERR ? ERR ? err:",err)
+        //res.status(200).send(`err:${err}`)  
     })
-    */
-    var get_token_from_somewhere = 'token-need-to-get'
-
-   res.status(200).send(`${get_token_from_somewhere}`)
+    
+ 
+   res.status(200).send(`${hashed_password}`)
     conn.end()
 
 })
@@ -134,13 +143,43 @@ apivTest.post('/auth/login', (req, res) => {
       res.status(500).send('NO ENCAPSULATED DB CONNECTION.')
   }
   var conn = db_conn()
- /* 
- conn.query(`INSERT INTO servewerx.user (userName,password) VALUES ('${body.userName}','${body.password}')`, function (err, rows, fields) {
-    if (err) throw err
-      res.status(200).send(`insert id:${rows.insertId}`)  
-  })
-  */
  
+ conn.query(`SELECT * FROM  servewerx.user WHERE userName = '${body.userName}'`, function (err, rows, fields) {
+    if (err) throw err
+      //res.status(200).send(`insert id:${rows.insertId}`)  
+      console.log("success rows:",rows)
+      console.log(rows[0]);
+      
+      console.log(rows[0].userName)
+      console.log(rows[0].password)
+      console.log("^^^")
+      //comparePassword( body.password, candidatePassword,cb)
+      var plainText = req.body.password
+      var hashed = rows[0].password
+      console.log("plainText:",plainText) 
+      console.log("hashed:",hashed) 
+      bcrypt.compare(plainText, hashed, function(err, result) {
+        // result == true
+        console.log("err:",err)
+        if(err) return (err) 
+        console.log("RESULT:",result)
+    });
+  })
+
+  
+
+
+ function cb(args1,args2){
+   console.log("CB...CB")
+   console.log(args1,args2)
+ }
+ function comparePassword(previousPassword, candidatePassword,cb){
+    console.log("comparePassword....")
+    bcrypt.compare(previousPassword, candidatePassword,  function(err, isMatch) {
+      if(err) return cb(err);
+      cb(null, isMatch)
+    })
+ }
  res.status(200).send(`successful login by existing member user.`)
   conn.end()
 

@@ -170,7 +170,7 @@ apivTest.post("/auth/login", (req, res) => {
           console.log("LOGIN : err:", err);
           if (err) return err;
           console.log("LOGIN : RESULT:", result);
-          res.status(200).send(result);
+          res.status(200).send(hashed);
         }); // end of bcrypt
       } else {
         // ? double header error: ? :: res.status(500).send("NOT LEGAL AUTHORIZATION!!!")
@@ -214,16 +214,18 @@ Document the Results:
     -good- can not access admin page.
     -good- got token back: "$2b$10$YKpTIHY4AQAHS.4.QVVN.uUIXiFxaakB2K4fsfpORhlZQ20DvUkaq"
     -good- user saved in DB.
-    -bad- does NOT redirect to the admin page or the home page.
+    FIXED: -bad- does NOT redirect to the admin page or the home page.
 
 2) login incorrect credentials 
-    -bad- token: successful login by existing member user.
-    -bad- CAN access the admin page.
+   FIXED: -bad- token: successful login by existing member user.
+    FIXED: -bad- CAN access the admin page.
     - good- after log out. can NOT access the admin page.
 3) login correct credentials 
-    -bad- token is INCORRECTLY stored in local storage.
+   FIXED:  -bad- token is INCORRECTLY stored in local storage. now stored as 'true' 
     -good- CAN access the admin page.
-
+4) token
+  FIXED BUT: -bad- Should the 'token' be the hashed password? what should it be ? 
+  BUT: it should be a JWT, that is the next ticket.
 */
 
 //================================

@@ -1,5 +1,8 @@
 //=====
 const config = require('./config.js');
+require('dotenv').config()
+const cookieParser = require('cookie-parser')
+
 //====
 var express = require("express");
 var cors = require('cors');
@@ -7,6 +10,8 @@ var app = express();
 var mysql = require('mysql')
 const bodyParser = require("body-parser")
 const path = require("path")
+const jwt = require('jsonwebtoken')
+
 
 // Controllers:
 var apivTest = require('./controllers/api_vTest')

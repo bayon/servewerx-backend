@@ -28,7 +28,7 @@ exports.refresh = function (req, res){
     let newToken = jwt.sign(payload, process.env.ACCESS_TOKEN_SECRET, 
     {
         algorithm: "HS256",
-        expiresIn: process.env.ACCESS_TOKEN_LIFE
+        expiresIn: '1d',//process.env.ACCESS_TOKEN_LIFE
     })
 
     res.cookie("jwt", newToken, {secure: true, httpOnly: true})

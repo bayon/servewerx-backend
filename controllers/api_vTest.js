@@ -146,9 +146,11 @@ var username = req.body.userName;
   let payload = { username: username };
   console.log("payload:",payload)
   //create the access token with the shorter lifespan
+  console.log("ACCESS_TOKEN_LIFE:",process.env.ACCESS_TOKEN_LIFE)
+
   let accessToken = jwt.sign(payload, process.env.ACCESS_TOKEN_SECRET, {
     algorithm: "HS256",
-    expiresIn: process.env.ACCESS_TOKEN_LIFE,
+    expiresIn:  '1d',
   });
   console.log("accessToken:",accessToken)
   //create the refresh token with the longer lifespan
@@ -157,7 +159,7 @@ var username = req.body.userName;
     process.env.REFRESH_TOKEN_SECRET,
     {
       algorithm: "HS256",
-      expiresIn: process.env.REFRESH_TOKEN_LIFE,
+      expiresIn: '30d' ,//process.env.REFRESH_TOKEN_LIFE,
     }
   );
   console.log("refreshToken:",refreshToken);
@@ -225,16 +227,8 @@ apivTest.post("/auth/login", (req, res) => {
           });
           console.log("accessToken:",accessToken)
           //create the refresh token with the longer lifespan
-          let refreshToken = jwt.sign(
-            payload,
-            process.env.REFRESH_TOKEN_SECRET,
-            {
-              algorithm: "HS256",
-              expiresIn: process.env.REFRESH_TOKEN_LIFE,
-            }
-          );
-          console.log("refreshToken:",refreshToken);
-          res.cookie("jwt", accessToken, {secure: true, httpOnly: true})
+          
+          //res.cookie("jwt", accessToken, {secure: true, httpOnly: true})
           res.status(200).send(accessToken)
           //res.status(200).send(hashed);
         }); // end of bcrypt

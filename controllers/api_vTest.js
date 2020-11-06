@@ -116,13 +116,7 @@ apivTest.delete("/junk/:id", (req, res) => {
 });
 //=========================
 
-function generateAccessToken(username) {
-  // expires after half and hour (1800 seconds = 30 minutes)
-  // !!! MOVE TO .env FILE
-  const TOKEN_SECRET =
-    "2f90a710a4da0832b09f0cBUTTS3730cd9b8d3ff9d42710a4da095a2ce285b0e1af3eb84df6611";
-  return jwt.sign(username, TOKEN_SECRET, { expiresIn: "1800s" });
-}
+ 
 
 apivTest.post("/auth/signup", auth(), (req, res, next) => {
 
@@ -146,7 +140,7 @@ apivTest.post("/auth/signup", auth(), (req, res, next) => {
 
   let accessToken = jwt.sign(payload, process.env.ACCESS_TOKEN_SECRET, {
     algorithm: "HS256",
-    expiresIn:  '1d',
+    expiresIn:  '1h',
   });
   console.log("accessToken:",accessToken)
   //create the refresh token with the longer lifespan
@@ -155,7 +149,7 @@ apivTest.post("/auth/signup", auth(), (req, res, next) => {
     process.env.REFRESH_TOKEN_SECRET,
     {
       algorithm: "HS256",
-      expiresIn: '30d' ,//process.env.REFRESH_TOKEN_LIFE,
+      expiresIn: '1d' ,//process.env.REFRESH_TOKEN_LIFE,
     }
   );
   console.log("refreshToken:",refreshToken);
@@ -206,7 +200,7 @@ apivTest.post("/auth/login", (req, res) => {
           //create the access token with the shorter lifespan
           let accessToken = jwt.sign(payload, process.env.ACCESS_TOKEN_SECRET, {
             algorithm: "HS256",
-            expiresIn: '1d',//process.env.ACCESS_TOKEN_LIFE,
+            expiresIn: '1h',//process.env.ACCESS_TOKEN_LIFE,
           });
           console.log("accessToken:",accessToken)
           //create the refresh token with the longer lifespan

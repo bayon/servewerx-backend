@@ -1,33 +1,50 @@
 // API Version Test  ------------------
-const config = require("../config.js");
-
 require("dotenv").config();
+const config = require("../config.js");
 const cookieParser = require("cookie-parser");
-
 var mysql = require("mysql");
 var express = require("express");
-var apivTest = express.Router();
+var route = express();
+var userController = require('./user/userController');
+
 var bodyParser = require("body-parser");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
+ /*
+Sub Route Template:
+var express = require("express");
+var route = express();
+var apivTest = require('./controllers/api_vTest')
+route.use('/api/vTest', apivTest);
+*/
+route.use('/users',userController)
+//route.use('/users', userController); 
 
 var db_conn = require("../db/connection");
-apivTest.get("/", function (req, res) {
-  res.send("Hello from apivTest root route.");
+
+route.get("/", function (req, res) {
+  res.send("Hello from route root route.");
 });
 
-apivTest.get("/users", function (req, res) {
-  res.send("List of apivTest users.");
+
+/*
+route.get("/users", function (req, res) {
+  res.send("List of route users.");
 });
+*/
+
 //middleware
 const middlewareX = require("../middleware/middlewareX");
 const auth = require("../middleware/auth");
 const { verify } = require("../middleware/verify");
-const { refresh } = require("../middleware/refresh");
+const { Router } = require("express");
+//======================================================
+ 
+// //Routing 
+// route.use('/users', userController);
+//======================================================
 
-//==============
-
-apivTest.get("/junk", middlewareX(), (req, res, next) => {
+route.get("/junk", middlewareX(), (req, res, next) => {
   if (!db_conn()) {
     res.status(500).send("NO ENCAPSULATED DB CONNECTION.");
   }
@@ -43,7 +60,7 @@ apivTest.get("/junk", middlewareX(), (req, res, next) => {
   conn.end();
 });
 
-apivTest.get("/junk/:id", middlewareX(), (req, res, next) => {
+route.get("/junk/:id", middlewareX(), (req, res, next) => {
   const id = Number(req.params.id);
   if (!db_conn()) {
     res.status(500).send("NO ENCAPSULATED DB CONNECTION.");
@@ -64,7 +81,7 @@ apivTest.get("/junk/:id", middlewareX(), (req, res, next) => {
   conn.end();
 });
 
-apivTest.post("/junk", (req, res) => {
+route.post("/junk", (req, res) => {
   const _junk = req.body;
   if (!db_conn()) {
     res.status(500).send("NO ENCAPSULATED DB CONNECTION.");
@@ -80,7 +97,7 @@ apivTest.post("/junk", (req, res) => {
   conn.end();
 });
 
-apivTest.put("/junk/:id", (req, res) => {
+route.put("/junk/:id", (req, res) => {
   const id = Number(req.params.id);
   const _junk = req.body;
   if (!db_conn()) {
@@ -96,7 +113,7 @@ apivTest.put("/junk/:id", (req, res) => {
   );
   conn.end();
 });
-apivTest.delete("/junk/:id", (req, res) => {
+route.delete("/junk/:id", (req, res) => {
   const id = Number(req.params.id);
   if (!db_conn()) {
     res.status(500).send("NO ENCAPSULATED DB CONNECTION.");
@@ -115,7 +132,7 @@ apivTest.delete("/junk/:id", (req, res) => {
 });
 //=========================
 
-apivTest.post("/auth/signup", auth(), (req, res, next) => {
+route.post("/auth/signup", auth(), (req, res, next) => {
   const body = req.body;
   console.log("req.body:", body);
   console.log("req.params:", req.params);
@@ -165,7 +182,7 @@ apivTest.post("/auth/signup", auth(), (req, res, next) => {
   conn.end();
 });
 
-apivTest.post("/auth/login", (req, res) => {
+route.post("/auth/login", (req, res) => {
   if (!req.body.userName || !req.body.password) {
     return res.status(401).send();
   }
@@ -245,15 +262,14 @@ apivTest.post("/auth/login", (req, res) => {
 
 //replace token middleware with verify middleware.
 
-apivTest.get("/token/test", verify, (req, res) => {
+route.get("/token/test", verify, (req, res) => {
   console.log("TEST TOKENS");
   res.status(200).send("success token test");
 });
 
-apivTest.post("/refresh", refresh);
-
+ 
 //=====================
-module.exports = apivTest;
+module.exports = route;
 
 /*
 AUTHENTICATION TODOS: 

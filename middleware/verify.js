@@ -23,10 +23,6 @@ exports.verify = function(req, res, next){
         console.log("accessToken:",accessToken)
         console.log(".env ACCESS_TOKEN_SECRET:",process.env.ACCESS_TOKEN_SECRET)
         var secret = process.env.ACCESS_TOKEN_SECRET
-
-        // SINGLE QUOTE? nope: var akcess_tokin = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImphY2tAamFjay5jb20iLCJpYXQiOjE2MDQ2MTM2MTcsImV4cCI6MTYwNDYxMzYxN30._kp_METfG69y4YyMc5zFIkYcl2oFGK5nxLNkH1exeI8'
-        // BUT MAYBE: got token expired 
-        var akkess = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImppbUBqaW0uY29tIiwiaWF0IjoxNjA0NjE0MTU3LCJleHAiOjE2MDQ2MTQxNTd9.ir8AxO4t9Kjky-bwDYcLGe4hvpIt5bpmUwo-yHXwMV4'
         payload = jwt.verify(final_accessToken, secret)
         
         next()

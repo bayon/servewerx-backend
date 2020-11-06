@@ -127,6 +127,11 @@ apivTest.post("/auth/signup", auth(), (req, res, next) => {
     res.status(500).send("NO ENCAPSULATED DB CONNECTION.");
   }
   var conn = db_conn();
+  // TODO: 11-06-2020
+  //1st Check To Prevent Duplicate User:: IF NO continue, IF YES, handle whether REFRESHING TOKEN. 
+
+
+
   var hashed_password = res.locals.hashed_password;
 
   let payload = { username: username };
@@ -210,6 +215,7 @@ apivTest.post("/auth/login", (req, res) => {
             //YES EXPIRED
             console.log("EXPIRED");
             res.status(403).send("YOUR TOKEN HAS EXPIRED, NEED TO RE-SIGNUP");
+            //TODO: How to handle DB when existing user has to get new tokens VS. checking for duplicate email user names.
           } else {
             // NO NOT EXPIRED
             console.log("NOT EXPIRED REFRESH TOKEN")

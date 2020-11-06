@@ -17,16 +17,7 @@ const bodyParser = require("body-parser")
 const path = require("path")
 const jwt = require('jsonwebtoken')
 
-/*
-Sub Route Template:
-var express = require("express");
-var app = express();
-var apivTest = require('./routers/api_vTest')
-app.use('/api/vTest', apivTest);
-*/
-
-
-
+ 
 //globals
 global.server = {}
 global.server.port = process.env.PORT

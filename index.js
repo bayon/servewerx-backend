@@ -47,6 +47,10 @@ console.log("HOST:",process.env.HOST)
 console.log("PORT:",process.env.PORT)
 console.log("DB_PORT:",process.env.DB_PORT)
 console.log("DB_PWD:",process.env.DB_PWD)
+
+console.log(`config.HOST: ${config.HOST}`)
+console.log(`config.PORT: ${config.PORT}`)
+
  //console.log("process.env:",process.env)
 
 /* WAS NOT WORKING ON PRODUCTION

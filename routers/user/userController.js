@@ -20,29 +20,4 @@ route.get("/", function (req, res) {
 
 
   module.exports = route;
-
-/*
-//========================================================
-const express = require('express');
-const app = express();
-const albumsRouter = require('./routers/albums');
-app.use('/albums', albumsRouter); 
-
-//=========================================================
-albums = apivTest
-
-const albums = require('express').Router();
-const tracks = require('./tracks').Router();
-// The fix for our parameters problem
-albums.use('/:albumId/tracks', function(req, res, next) {
-    req.albumId = req.params.albumId;
-    next()
-  }, tracks);
-module.exports = albums;
-
-//==========================================================
-const tracks = require('express').Router();
-module.exports = tracks;
-
-//==========================================================
-*/
+ 

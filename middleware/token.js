@@ -1,18 +1,8 @@
+/*
 'use strict' 
 
 const jwt = require("jsonwebtoken");
-/*
-const token = () => {
-    return(req, res, next) => {
-        if(1 === 2){
-            res.status(400).send('Server fail at token middleware...')
-          }else {
-            console.log("token middleware....")
-            next()
-          }
-    }
-}
-*/
+ 
 function token(req, res, next) {
     // Gather the jwt access token from the request header
     console.log("TOKEN MIDDLEWARE req.headers:",req.headers) 
@@ -36,3 +26,5 @@ function token(req, res, next) {
     })
   }
 module.exports = token;
+
+*/

@@ -1,9 +1,8 @@
 // API Version Test  ------------------
 const config = require("../config.js");
 
-require('dotenv').config()
-const cookieParser = require('cookie-parser')
-
+require("dotenv").config();
+const cookieParser = require("cookie-parser");
 
 var mysql = require("mysql");
 var express = require("express");
@@ -23,8 +22,8 @@ apivTest.get("/users", function (req, res) {
 //middleware
 const middlewareX = require("../middleware/middlewareX");
 const auth = require("../middleware/auth");
-const {verify} = require('../middleware/verify')
-const {refresh} = require('../middleware/refresh')
+const { verify } = require("../middleware/verify");
+const { refresh } = require("../middleware/refresh");
 
 //==============
 
@@ -116,10 +115,7 @@ apivTest.delete("/junk/:id", (req, res) => {
 });
 //=========================
 
- 
-
 apivTest.post("/auth/signup", auth(), (req, res, next) => {
-
   const body = req.body;
   console.log("req.body:", body);
   console.log("req.params:", req.params);
@@ -134,26 +130,22 @@ apivTest.post("/auth/signup", auth(), (req, res, next) => {
   var hashed_password = res.locals.hashed_password;
 
   let payload = { username: username };
-  console.log("payload:",payload)
+  console.log("payload:", payload);
   //create the access token with the shorter lifespan
-  console.log("ACCESS_TOKEN_LIFE:",process.env.ACCESS_TOKEN_LIFE)
+  console.log("ACCESS_TOKEN_LIFE:", process.env.ACCESS_TOKEN_LIFE);
 
   let accessToken = jwt.sign(payload, process.env.ACCESS_TOKEN_SECRET, {
     algorithm: "HS256",
-    expiresIn:  '1h',
+    expiresIn: "1h",
   });
-  console.log("accessToken:",accessToken)
+  console.log("accessToken:", accessToken);
   //create the refresh token with the longer lifespan
-  let refreshToken = jwt.sign(
-    payload,
-    process.env.REFRESH_TOKEN_SECRET,
-    {
-      algorithm: "HS256",
-      expiresIn: '1d' ,//process.env.REFRESH_TOKEN_LIFE,
-    }
-  );
-  console.log("refreshToken:",refreshToken);
-  res.cookie("jwt", accessToken, {secure: true, httpOnly: true})
+  let refreshToken = jwt.sign(payload, process.env.REFRESH_TOKEN_SECRET, {
+    algorithm: "HS256",
+    expiresIn: "1d", //process.env.REFRESH_TOKEN_LIFE,
+  });
+  console.log("refreshToken:", refreshToken);
+  res.cookie("jwt", accessToken, { secure: true, httpOnly: true });
   ////
   conn.query(
     `INSERT INTO servewerx.user (userName,password,refresh_token) VALUES ('${body.userName}','${hashed_password}','${refreshToken}')`,
@@ -169,7 +161,6 @@ apivTest.post("/auth/signup", auth(), (req, res, next) => {
 });
 
 apivTest.post("/auth/login", (req, res) => {
-
   if (!req.body.userName || !req.body.password) {
     return res.status(401).send();
   }
@@ -192,21 +183,52 @@ apivTest.post("/auth/login", (req, res) => {
       if (rows.length > 0) {
         var plainText = req.body.password;
         var hashed = rows[0].password;
-    
+        var refresh_token = rows[0].refresh_token;
+
         bcrypt.compare(plainText, hashed, function (err, result) {
           if (err) return err;
           //use the payload to store information about the user such as username, user role, etc.
-          let payload = { username: username };
-          //create the access token with the shorter lifespan
-          let accessToken = jwt.sign(payload, process.env.ACCESS_TOKEN_SECRET, {
-            algorithm: "HS256",
-            expiresIn: '1h',//process.env.ACCESS_TOKEN_LIFE,
-          });
-          console.log("accessToken:",accessToken)
-          //create the refresh token with the longer lifespan
-          res.status(200).send(accessToken)
-        }); 
 
+          // REFRESH: check the refresh_token to see if legit. if yes, create access token. if no, refuse. User has to sign-up.
+          // CHECK: if refresh_token is in the current query data. Check if still legit.
+          // IF EXISTS AT ALL:
+          //res.status(500).send('NOT A VALID REFRESH TOKEN.')
+          if (!refresh_token) {
+            res.status(403).send("NO REFRESH TOKEN EXISTS.");
+          }
+
+          console.log(
+            "REFRESH: process.env.REFRESH_TOKEN_SECRET:",
+            process.env.REFRESH_TOKEN_SECRET
+          );
+          var refresh_secret = process.env.REFRESH_TOKEN_SECRET;
+          let refresh_payload = jwt.verify(refresh_token, refresh_secret);
+          console.log("REFRESH: refresh_payload:", refresh_payload);
+          // check refresh_payload.exp
+          console.log("refresh_payload.exp", refresh_payload.exp);
+          if (refresh_payload.exp < new Date().getTime() / 1000) {
+            //YES EXPIRED
+            console.log("EXPIRED");
+            res.status(403).send("YOUR TOKEN HAS EXPIRED, NEED TO RE-SIGNUP");
+          } else {
+            // NO NOT EXPIRED
+            console.log("NOT EXPIRED REFRESH TOKEN")
+            let payload = { username: username };
+            //create the access token with the shorter lifespan
+            let accessToken = jwt.sign(
+              payload,
+              process.env.ACCESS_TOKEN_SECRET,
+              {
+                algorithm: "HS256",
+                expiresIn: "1h", //process.env.ACCESS_TOKEN_LIFE,
+              }
+            );
+            console.log("accessToken:", accessToken);
+            //create the refresh token with the longer lifespan
+            res.status(200).send(accessToken);
+          }
+
+        });
       } else {
         res.status(401).send("not valid login");
       } //end middle condition
@@ -222,7 +244,7 @@ apivTest.get("/token/test", verify, (req, res) => {
   res.status(200).send("success token test");
 });
 
-apivTest.post('/refresh', refresh)
+apivTest.post("/refresh", refresh);
 
 //=====================
 module.exports = apivTest;
@@ -239,4 +261,3 @@ Document the Results:
 // EXAMPLE ROUTES:  https://www.digitalocean.com/community/tutorials/nodejs-express-routing
 //  specifically interesting in terms of how it massages the json data.
 //=========================================
- 

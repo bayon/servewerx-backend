@@ -2,21 +2,30 @@
 const config = require('./config.js');
 require('dotenv').config()
 const cookieParser = require('cookie-parser')
-
+var cors = require('cors');
 //====
 var express = require("express");
-var cors = require('cors');
 var app = express();
+// Routers:
+var apivTest = require('./routers/api_vTest')
+var apiv1 = require('./routers/api_v1')
+var apiv2 = require('./routers/api_v2')
+
+
 var mysql = require('mysql')
 const bodyParser = require("body-parser")
 const path = require("path")
 const jwt = require('jsonwebtoken')
 
+/*
+Sub Route Template:
+var express = require("express");
+var app = express();
+var apivTest = require('./routers/api_vTest')
+app.use('/api/vTest', apivTest);
+*/
 
-// Controllers:
-var apivTest = require('./controllers/api_vTest')
-var apiv1 = require('./controllers/api_v1')
-var apiv2 = require('./controllers/api_v2')
+
 
 //globals
 global.server = {}
@@ -61,4 +70,4 @@ app.get("/",(req,res, next) => {
 // ROUTING TO CONTROLLERS: 
 app.use('/api/v1', apiv1);
 app.use('/api/vTest', apivTest);
-app.use('/api/v2', require('./controllers/api_v2'));
+app.use('/api/v2', apiv2);

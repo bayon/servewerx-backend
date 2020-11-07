@@ -1,4 +1,4 @@
-// API Version Test  -------------------------------------------------------------------
+// API Version Test  --------------------------------------------------------------------
 require("dotenv").config();
 const config = require("../config.js");
 const cookieParser = require("cookie-parser");
@@ -11,12 +11,12 @@ const jwt = require("jsonwebtoken");
 var db_conn = require("../db/connection");
 
 //Controllers and Routes
-var userController = require("./user/userController");
-route.use("/users", userController);
-var junkController = require("./junk/junkController");
-route.use("/junk", junkController);
-var authController = require("./auth/authController");
-route.use("/auth", authController);
+var userController = require('./user/userController');
+route.use('/users',userController)
+var junkController = require('./junk/junkController');
+route.use('/junk', junkController)
+var authController = require('./auth/authController');
+route.use('/auth', authController)
 
 route.get("/", function (req, res) {
   res.send("default api GET endpoint.");

@@ -63,13 +63,13 @@ route.post("/signup", auth(), (req, res, next) => {
 });
 
 route.post("/login", (req, res) => {
+  console.log("LOGIN in authController")
+  const body = req.body;
+  console.log("body:",body)
   if (!req.body.userName || !req.body.password) {
     return res.status(401).send();
   }
-  const body = req.body;
-  var username = req.body.userName;
-  var password = req.body.password;
-  console.log("LOGIN req.body:", body);
+   var username = req.body.userName;
   console.log("LOGIN req.params:", req.params);
   //console.log("req:",req)
   if (!db_conn()) {
@@ -132,6 +132,7 @@ route.post("/login", (req, res) => {
           }
         });
       } else {
+        console.log("invalid login credentials.")
         res.status(401).send("not valid login");
       } //end middle condition
     }
